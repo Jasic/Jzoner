@@ -1,9 +1,8 @@
 package org.jasic.qzoner.core.handler;
 import jpcap.PacketReceiver;
 import jpcap.packet.ARPPacket;
+import jpcap.packet.IPPacket;
 import jpcap.packet.Packet;
-import jpcap.packet.TCPPacket;
-import jpcap.packet.UDPPacket;
 /**
  * User: Jasic
  * Date: 13-9-11
@@ -11,8 +10,7 @@ import jpcap.packet.UDPPacket;
 public class HandlerDispatcher implements PacketReceiver {
 
     private AHandler arpHandler;
-    private AHandler tcpHandler;
-    private AHandler udpHandler;
+    private AHandler ipHandler;
 
     public HandlerDispatcher() {
 
@@ -21,18 +19,20 @@ public class HandlerDispatcher implements PacketReceiver {
 
     private void init() {
         this.arpHandler = new ArpHandler();
-        this.tcpHandler = new TCPHandler();
-        this.udpHandler = new UDPHandler();
+        this.ipHandler = new IpHandler(null);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public void dispatch(Packet packet) {
 
         if (packet instanceof ARPPacket) {
             this.arpHandler.handle(packet);
-        } else if (packet instanceof TCPPacket) {
-            this.tcpHandler.handle(packet);
-        } else if (packet instanceof UDPPacket) {
-            this.udpHandler.handle(packet);
+        } else if (packet instanceof IPPacket) {
+            this.ipHandler.handle(packet);
         } else {
             throw new RuntimeException("The type[" + packet.getClass().getSimpleName() + "] is not supported now~");
         }

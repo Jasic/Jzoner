@@ -16,6 +16,15 @@ public class IpMacPair {
 
     private String ip;
     private String mac;
+    private String subNet;
+
+    public String getSubNet() {
+        return subNet;
+    }
+
+    public void setSubNet(String subNet) {
+        this.subNet = subNet;
+    }
 
     public String getIp() {
         return ip;

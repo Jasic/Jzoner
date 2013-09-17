@@ -18,6 +18,7 @@ public class PacketCaptor {
     private JpcapCaptor jpcapCaptor;
     private IpMacPair ipMacPair;
     private HandlerDispatcher handler;
+    private NetworkInterface nif;
 
     private int snaplen;//  Max number of bytes captured at once
 
@@ -36,8 +37,15 @@ public class PacketCaptor {
     private void init() {
         this.snaplen = 1024;
         this.timeout = 1000;
+        this.nif = NetWorkUtil.getIfByMac(this.ipMacPair.getMac());
 
-        NetworkInterface nif = NetWorkUtil.getIpByMac(this.ipMacPair.getMac());
+    }
+
+    public void startCaptor() {
+
+        if (this.filter == null) {
+            this.filter = "";
+        }
         try {
             this.jpcapCaptor = JpcapCaptor.openDevice(nif, this.snaplen, true, timeout);
             this.jpcapCaptor.setFilter(this.filter, true);
@@ -46,9 +54,7 @@ public class PacketCaptor {
             logger.error(e.getMessage());
             e.printStackTrace();
         }
-    }
 
-    public void startCaptor() {
         this.jpcapCaptor.loopPacket(-1, new HandlerDispatcher());
     }
 

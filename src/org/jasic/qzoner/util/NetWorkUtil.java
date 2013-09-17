@@ -1,10 +1,9 @@
 package org.jasic.qzoner.util;
-import cn.tisson.framework.utils.ByteUtils;
 import jpcap.JpcapCaptor;
-import jpcap.JpcapSender;
 import jpcap.NetworkInterface;
 import jpcap.NetworkInterfaceAddress;
 import org.jasic.utils.ByteUtil;
+import org.jasic.utils.StringUtils;
 import org.junit.Test;
 
 /**
@@ -16,16 +15,62 @@ public class NetWorkUtil {
 
     @Test
     public void test() {
-       NetworkInterface iF = getIpByMac("78-45-C4-05-80-1D");
+        NetworkInterface iF = getIfByMac("78-45-C4-05-80-1D");
         System.out.println(iF);
+        System.out.println(getIpByMac("78-45-C4-05-80-1D"));
+        System.out.println(getSubNetByMac("78-45-C4-05-80-1D"));
+
     }
 
     /**
-     * mac 地址字符需符合这样的规则 如:00-50-56-C0-00-08
+     * 根据mac地址获取字网掩码字符串
+     *
      * @param mac
      * @return
      */
-    public static NetworkInterface getIpByMac(String mac) {
+    public static String getSubNetByMac(String mac) {
+        NetworkInterface iF = getIfByMac(mac);
+        if (iF != null && iF.addresses != null && iF.addresses.length != 0) {
+            for (NetworkInterfaceAddress address : iF.addresses) {
+                if (address.subnet == null) continue;
+                String ip = StringUtils.deleteWhitespace(address.subnet.getHostAddress());
+                if (StringUtils.isMatch("^[1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}$",
+                        ip)) {
+                    return ip;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据mac地址获取ip字符串
+     *
+     * @param mac
+     * @return
+     */
+    public static String getIpByMac(String mac) {
+        NetworkInterface iF = getIfByMac(mac);
+        if (iF != null && iF.addresses != null && iF.addresses.length != 0) {
+            for (NetworkInterfaceAddress address : iF.addresses) {
+                String ip = StringUtils.deleteWhitespace(address.address.getHostAddress());
+                if (StringUtils.isMatch("^[1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}$",
+                        ip)) {
+                    return ip;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * mac 地址字符需符合这样的规则 如:00-50-56-C0-00-08
+     *
+     * @param mac
+     * @return
+     */
+    public static NetworkInterface getIfByMac(String mac) {
 
         // 简单判断mac地址
         if (null == mac || mac.split("-").length != 6) {
@@ -45,17 +90,4 @@ public class NetWorkUtil {
         return eth;
     }
 
-    /**
-     * 将mac地址由字符转换byte数组
-     * @param s
-     * @return
-     */
-    public static byte[] macStrToByte(String s) {
-        byte[] mac = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-        String[] s1 = s.split("-");
-        for (int x = 0; x < s1.length; x++) {
-            mac[x] = (byte) ((Integer.parseInt(s1[x], 16)) & 0xff);
-        }
-        return mac;
-    }
 }

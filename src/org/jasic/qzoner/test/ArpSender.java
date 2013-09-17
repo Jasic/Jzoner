@@ -5,13 +5,16 @@ package org.jasic.qzoner.test;
  */
 
 
-import java.net.InetAddress;
 import jpcap.JpcapCaptor;
 import jpcap.JpcapSender;
 import jpcap.NetworkInterface;
 import jpcap.packet.ARPPacket;
 import jpcap.packet.EthernetPacket;
-import static org.jasic.qzoner.util.NetWorkUtil.*;
+
+import java.net.InetAddress;
+
+import static org.jasic.utils.SystemUtil.macStrToByte;
+
 public class ArpSender {
 
 

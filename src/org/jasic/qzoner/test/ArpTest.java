@@ -1,5 +1,4 @@
 package org.jasic.qzoner.test;
-import cn.tisson.framework.interrupt.InterruptHandler;
 import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 import jpcap.PacketReceiver;
@@ -8,7 +7,6 @@ import jpcap.packet.EthernetPacket;
 import jpcap.packet.Packet;
 import org.jasic.qzoner.util.NetWorkUtil;
 import org.jasic.utils.ByteUtil;
-import org.jasic.utils.StringUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -36,7 +34,7 @@ public class ArpTest {
 
     @Test
     public void testGetDevice() {
-        NetworkInterface intf = NetWorkUtil.getIpByMac("78-45-C4-05-80-1D");
+        NetworkInterface intf = NetWorkUtil.getIfByMac("78-45-C4-05-80-1D");
 
         try {
             JpcapCaptor captor = JpcapCaptor.openDevice(intf, 65535, false, 20);
@@ -64,6 +62,5 @@ public class ArpTest {
             e.printStackTrace();
         }
 
-        InterruptHandler.Sleep(99999);
     }
 }

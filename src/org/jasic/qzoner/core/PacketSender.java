@@ -7,6 +7,8 @@ import org.jasic.qzoner.util.NetWorkUtil;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+
+import static org.jasic.utils.SystemUtil.macStrToByte;
 /**
  * User: Jasic
  * Date: 13-9-11
@@ -28,7 +30,7 @@ public class PacketSender {
     }
 
     private void init() {
-        NetworkInterface nif = NetWorkUtil.getIpByMac(this.ip_mac.getMac());
+        NetworkInterface nif = NetWorkUtil.getIfByMac(this.ip_mac.getMac());
         try {
             this.jpcapSender = JpcapSender.openDevice(nif);
         } catch (IOException e) {
@@ -39,6 +41,7 @@ public class PacketSender {
 
     /**
      * 此方法的包需要完整
+     *
      * @param packet
      */
     public void send(Packet packet) {
@@ -52,12 +55,11 @@ public class PacketSender {
     }
 
     /**
-     *
-     * @param packet 数据包
+     * @param packet   数据包
      * @param dst_addr 目的地址mac
      */
     public void send(Packet packet, String dst_addr) {
-        send(packet, NetWorkUtil.macStrToByte(dst_addr));
+        send(packet, macStrToByte(dst_addr));
     }
 
     /**
@@ -80,7 +82,7 @@ public class PacketSender {
             ethPacket.dst_mac = dst_addr;
         }
         // 2、设置源地址
-        ethPacket.src_mac = NetWorkUtil.macStrToByte(this.ip_mac.getMac());
+        ethPacket.src_mac = macStrToByte(this.ip_mac.getMac());
 
         // 3、设置帧类型
         if (packet instanceof ARPPacket) {

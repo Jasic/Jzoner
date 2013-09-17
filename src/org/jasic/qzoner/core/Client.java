@@ -1,15 +1,13 @@
 package org.jasic.qzoner.core;
-import cn.tisson.framework.interrupt.InterruptHandler;
 import jpcap.packet.ARPPacket;
-import jpcap.packet.TCPPacket;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.util.NetWorkUtil;
 import org.jasic.qzoner.util.PacketGener;
 import org.jasic.utils.SystemUtil;
 
 import java.net.UnknownHostException;
 
-import static org.jasic.utils.StringUtils.*;
+import static org.jasic.utils.StringUtils.fieldval2Map;
+import static org.jasic.utils.SystemUtil.macStrToByte;
 /**
  * User: Jasic
  * Date: 13-9-11
@@ -48,16 +46,14 @@ public class Client {
         ARPPacket packet = null;
         try {
             packet = PacketGener.getArpReqPacket(fakeGateWay, target);
-            packet.datalink = PacketGener.genEthpacket(NetWorkUtil.macStrToByte(fakeGateWay.getMac()),
-                    NetWorkUtil.macStrToByte(target.getMac()));
+            packet.datalink = PacketGener.genEthpacket(macStrToByte(fakeGateWay.getMac()),
+                    macStrToByte(target.getMac()));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         while (true) {
             System.out.println("Send-->" + fieldval2Map(packet, packet.getClass()));
             sender.send(packet);
-
-
         }
     }
 
