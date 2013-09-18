@@ -16,7 +16,7 @@ import static org.jasic.utils.StringUtils.fieldval2Map;
  * User: Jasic
  * Date: 13-9-11
  */
-public class TestCore{
+public class TestCore {
 
     public static void main(String[] args) throws Throwable {
 
@@ -49,10 +49,10 @@ public class TestCore{
             try {
                 IpMacPair ipMacPair = new IpMacPair(NetWorkUtil.getIpByMac(mac), mac);
                 ipMacPair.setSubNet(NetWorkUtil.getSubNetByMac(mac));
-                List<ARPPacket> arpPackets = PacketGener.genBrocastArp(ipMacPair);
+                List<ARPPacket> arpPackets = PacketGener.genBrocastArp(ipMacPair, true);
                 for (ARPPacket arpPacket : arpPackets) {
                     sender.send(arpPacket);
-                    System.out.println("Send-->" + fieldval2Map(arpPacket, arpPacket.getClass(),3));
+                    System.out.println("Send-->" + fieldval2Map(arpPacket, arpPacket.getClass(), 3));
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();

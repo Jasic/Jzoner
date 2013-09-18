@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%p][%t][%c]%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+
+    <appender name="debug"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\debug.log"/>
+        <param name="DatePattern" value="'.'yyyyMMdd"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%p][%t][%d{yyyy-MM-dd HH:mm:ss.SSS}][%c][%l]%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG"/>
+            <param name="LevelMax" value="DEBUG"/>
+        </filter>
+    </appender>
+
+    <appender name="info"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\info.log"/>
+        <param name="DatePattern" value="'.'yyyyMMdd"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%p][%t][%d{yyyy-MM-dd HH:mm:ss.SSS}]%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <param name="LevelMax" value="INFO"/>
+        </filter>
+    </appender>
+
+    <appender name="warn"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\warn.log"/>
+        <param name="DatePattern" value="'.'yyyyMMdd"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%p][%t][%d{yyyy-MM-dd HH:mm:ss.SSS}][%c][%l]%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="WARN"/>
+            <param name="LevelMax" value="WARN"/>
+        </filter>
+    </appender>
+
+    <appender name="error"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\error.log"/>
+        <param name="DatePattern" value="'.'yyyyMMdd"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%p][%t][%d{yyyy-MM-dd HH:mm:ss.SSS}][%c][%l]%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR"/>
+            <param name="LevelMax" value="ERROR"/>
+        </filter>
+    </appender>
+
+    <logger name="logger_stdout" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <logger name="logger_debug" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="debug"/>
+    </logger>
+
+    <logger name="logger_info" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="info"/>
+    </logger>
+
+    <logger name="logger_warn" additivity="false">
+        <level value="warn"/>
+        <appender-ref ref="warn"/>
+    </logger>
+
+    <logger name="logger_error" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <root>
+        <level value="info"/>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="debug"/>
+        <appender-ref ref="info"/>
+        <appender-ref ref="warn"/>
+        <appender-ref ref="error"/>
+    </root>
+
+</log4j:configuration>

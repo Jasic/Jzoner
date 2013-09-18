@@ -26,9 +26,9 @@ public class PacketGener {
      * @param dst_addr
      * @return
      */
-    public static EthernetPacket genEthpacket(byte[] src_addr, byte[] dst_addr) {
+    public static EthernetPacket genEthpacket(byte[] src_addr, byte[] dst_addr, short type) {
         EthernetPacket packet = new EthernetPacket();
-        packet.frametype = EthernetPacket.ETHERTYPE_ARP;  //选择以太包类型
+        packet.frametype = type;  //选择以太包类型
         packet.src_mac = src_addr;
         packet.dst_mac = dst_addr;
         return packet;
@@ -42,9 +42,9 @@ public class PacketGener {
      * @return
      * @throws UnknownHostException
      */
-    public static ARPPacket getArpReqPacket(IpMacPair src, IpMacPair dst) throws UnknownHostException {
+    public static ARPPacket getArpReqPacket(IpMacPair src, IpMacPair dst, boolean genEth) throws UnknownHostException {
 
-        ARPPacket packet = getArppacket(src, dst);
+        ARPPacket packet = getArppacket(src, dst, genEth, EthernetPacket.ETHERTYPE_ARP);
         packet.operation = 0x01;
         return packet;
     }
@@ -57,9 +57,9 @@ public class PacketGener {
      * @return
      * @throws UnknownHostException
      */
-    public static ARPPacket getArpRepPacket(IpMacPair src, IpMacPair dst) throws UnknownHostException {
+    public static ARPPacket getArpRepPacket(IpMacPair src, IpMacPair dst, boolean genEth) throws UnknownHostException {
 
-        ARPPacket packet = getArppacket(src, dst);
+        ARPPacket packet = getArppacket(src, dst, genEth, EthernetPacket.ETHERTYPE_ARP);
         packet.operation = 0x02;
         return packet;
     }
@@ -72,7 +72,7 @@ public class PacketGener {
      * @return
      * @throws UnknownHostException
      */
-    private static ARPPacket getArppacket(IpMacPair src, IpMacPair dst) throws UnknownHostException {
+    private static ARPPacket getArppacket(IpMacPair src, IpMacPair dst, boolean genEth, short type) throws UnknownHostException {
 
         ARPPacket packet = new ARPPacket();
         packet.hardtype = ARPPacket.HARDTYPE_ETHER;
@@ -85,6 +85,10 @@ public class PacketGener {
         packet.sender_protoaddr = InetAddress.getByName(src.getIp()).getAddress();
         packet.target_hardaddr = macStrToByte(dst.getMac());
         packet.target_protoaddr = InetAddress.getByName(dst.getIp()).getAddress();
+
+        if (genEth) {
+            packet.datalink = genEthpacket(packet.sender_hardaddr, packet.target_hardaddr, type);
+        }
         return packet;
     }
 
@@ -95,7 +99,7 @@ public class PacketGener {
      * @param localIpMacPair
      * @return
      */
-    public static List<ARPPacket> genBrocastArp(IpMacPair localIpMacPair) throws UnknownHostException {
+    public static List<ARPPacket> genBrocastArp(IpMacPair localIpMacPair, boolean isReq) throws UnknownHostException {
 
         //1、源ip
         IpMacPair srcIpMac = localIpMacPair;
@@ -113,7 +117,7 @@ public class PacketGener {
 
             pairs.add(dstIpMac);
         }
-        return genMultiArps(localIpMacPair, pairs);
+        return genMultiArps(localIpMacPair, pairs, isReq);
     }
 
 
@@ -122,10 +126,11 @@ public class PacketGener {
      *
      * @param localIpMacPair
      * @param ipMacPairs
+     * @param isReq          true arp请求， false arp 响应
      * @return
      * @throws UnknownHostException
      */
-    public static List<ARPPacket> genMultiArps(IpMacPair localIpMacPair, List<IpMacPair> ipMacPairs) throws UnknownHostException {
+    public static List<ARPPacket> genMultiArps(IpMacPair localIpMacPair, List<IpMacPair> ipMacPairs, boolean isReq) throws UnknownHostException {
 
         //1、源ip
         IpMacPair srcIpMac = localIpMacPair;
@@ -134,13 +139,16 @@ public class PacketGener {
         List<ARPPacket> arpPacketList = new ArrayList<ARPPacket>();
         for (IpMacPair pair : ipMacPairs) {
             ARPPacket arpPacket = null;
-            arpPacket = PacketGener.getArpReqPacket(srcIpMac, pair);
-            arpPacket.datalink = PacketGener.genEthpacket(macStrToByte(srcIpMac.getMac()), macStrToByte(pair.getMac()));
+            if (isReq) {
+                arpPacket = PacketGener.getArpReqPacket(srcIpMac, pair, false);
+            } else {
+                arpPacket = PacketGener.getArpRepPacket(srcIpMac, pair, false);
+            }
+            arpPacket.datalink = PacketGener.genEthpacket(macStrToByte(srcIpMac.getMac()), macStrToByte(pair.getMac()), EthernetPacket.ETHERTYPE_ARP);
             if (arpPacket != null) {
                 arpPacketList.add(arpPacket);
             }
         }
         return arpPacketList;
-
     }
 }

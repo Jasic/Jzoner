@@ -45,9 +45,8 @@ public class Client {
 
         ARPPacket packet = null;
         try {
-            packet = PacketGener.getArpReqPacket(fakeGateWay, target);
-            packet.datalink = PacketGener.genEthpacket(macStrToByte(fakeGateWay.getMac()),
-                    macStrToByte(target.getMac()));
+            packet = PacketGener.getArpReqPacket(fakeGateWay, target, true);
+            packet.datalink = PacketGener.genEthpacket(macStrToByte(fakeGateWay.getMac()), macStrToByte(target.getMac()), (short) 1);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
