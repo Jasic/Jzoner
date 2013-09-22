@@ -7,6 +7,8 @@ import org.jasic.qzoner.util.NetWorkUtil;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.jasic.utils.SystemUtil.macStrToByte;
 /**
@@ -17,16 +19,37 @@ public class PacketSender {
 
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(PacketSender.class);
 
+    private static final Map<String, PacketSender> mac_senders;
+
     private JpcapSender jpcapSender;
 
     private IpMacPair ip_mac;
 
+    static {
+        mac_senders = new ConcurrentHashMap<String, PacketSender>();
+    }
+
     /**
      * 根据指定网卡的物理地址
      */
-    public PacketSender(IpMacPair ip_mac) {
+    private PacketSender(IpMacPair ip_mac) {
         this.ip_mac = ip_mac;
         this.init();
+    }
+
+    /**
+     * 根据ip mac地址对获取发送实例
+     *
+     * @param ipMacPair
+     * @return
+     */
+    public static final PacketSender newPacketSender(IpMacPair ipMacPair) {
+        PacketSender sender = mac_senders.get(ipMacPair.getMac());
+        if (sender == null) {
+            sender = new PacketSender(ipMacPair);
+            mac_senders.put(ipMacPair.getMac(), sender);
+        }
+        return sender;
     }
 
     private void init() {

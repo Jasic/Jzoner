@@ -7,6 +7,8 @@ import org.jasic.qzoner.util.NetWorkUtil;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 /**
  * User: Jasic
  * Date: 13-9-11
@@ -20,6 +22,7 @@ public class PacketCaptor {
     private HandlerDispatcher handler;
     private NetworkInterface nif;
 
+    private static final Map<String, PacketCaptor> mac_captor;
     private int snaplen;//  Max number of bytes captured at once
 
     // unit ms
@@ -29,9 +32,27 @@ public class PacketCaptor {
 
     private boolean blockMode;// processPacket()
 
-    public PacketCaptor(IpMacPair ipMacPair) {
+    static {
+        mac_captor = new ConcurrentHashMap<String, PacketCaptor>();
+    }
+
+    private PacketCaptor(IpMacPair ipMacPair) {
         this.ipMacPair = ipMacPair;
         this.init();
+    }
+
+    /**
+     * 根据地址对获取包捕获者
+     * @param ipMacPair
+     * @return
+     */
+    public static final PacketCaptor newPacketCaptor(IpMacPair ipMacPair) {
+        PacketCaptor captor = mac_captor.get(ipMacPair.getMac());
+        if (null == captor) {
+            captor = new PacketCaptor(ipMacPair);
+            mac_captor.put(ipMacPair.getMac(), captor);
+        }
+        return captor;
     }
 
     private void init() {

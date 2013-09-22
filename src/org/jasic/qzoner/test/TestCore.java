@@ -32,7 +32,7 @@ public class TestCore {
         new Thread() {
             @Override
             public void run() {
-                PacketCaptor captor = new PacketCaptor(new IpMacPair("", Globalvariables.MAC_LOCAL_ETH_0));
+                PacketCaptor captor = PacketCaptor.newPacketCaptor(new IpMacPair("", Globalvariables.MAC_LOCAL_ETH_0));
                 captor.startCaptor();
             }
         }.start();
@@ -43,7 +43,7 @@ public class TestCore {
 
         String mac = Globalvariables.MAC_LOCAL_ETH_0;
 
-        PacketSender sender = new PacketSender(new IpMacPair("", mac));
+        PacketSender sender = PacketSender.newPacketSender(new IpMacPair("", mac));
 
         while (true) {
             try {

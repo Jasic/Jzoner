@@ -19,7 +19,7 @@ public class HandlerDispatcher implements PacketReceiver {
 
     private void init() {
         this.arpHandler = new ArpHandler();
-        this.ipHandler = new IpHandler(null);
+        this.ipHandler = new IpHandler();
     }
 
     @Override

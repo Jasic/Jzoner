@@ -17,9 +17,9 @@ public class GlobalConstans {
     public static final boolean MODULE_STATUS_SYSTEM_INIT = true;
 
     // Arp策略模块
-    public final static String MODULE_NAME_ARR_STRATEGY = "[ArpStrategy]";
-    public final static int MODULE_PRIORITY_ARP_STRATEGY = 1;
-    public static final boolean MODULE_STATUS_ARP_STRATEGY = true;
+    public final static String MODULE_NAME_PACKET_STRATEGY = "[ArpStrategy]";
+    public final static int MODULE_PRIORITY_PACKET_STRATEGY = 1;
+    public static final boolean MODULE_STATUS_PACKET_STRATEGY = true;
 
 
 }

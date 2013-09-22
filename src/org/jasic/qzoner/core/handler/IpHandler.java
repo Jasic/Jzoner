@@ -1,27 +1,24 @@
 package org.jasic.qzoner.core.handler;
 import jpcap.packet.Packet;
 import jpcap.packet.TCPPacket;
-import org.jasic.qzoner.core.PacketSender;
-import org.jasic.utils.ObjectUtils;
+import jpcap.packet.UDPPacket;
+import org.jasic.qzoner.core.handler.proc.AProcessor;
 /**
  * User: Jasic
  * Date: 13-9-11
  */
 public class IpHandler extends AHandler {
 
-    private PacketSender pSender;
-
-
-    public IpHandler(PacketSender packetSender) {
-        this.pSender = packetSender;
-    }
+    private AProcessor<TCPPacket> tcpProc;
+    private AProcessor<UDPPacket> udpProc;
 
     @Override
     public void handle(Packet packet) {
 
         if (packet instanceof TCPPacket) {
-            TCPPacket tcpPacket = ObjectUtils.cloneObject(TCPPacket.class, null);
-
+            tcpProc.process((TCPPacket) packet);
+        } else if (packet instanceof UDPPacket) {
+            udpProc.process((UDPPacket) packet);
         }
 
 

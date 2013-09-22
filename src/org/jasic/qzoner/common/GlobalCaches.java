@@ -24,6 +24,17 @@ public class GlobalCaches {
     // Arp请求发送队列
     public static LinkedBlockingQueue<List<? extends Packet>> IP_MAC_LAN_ARP_REQUEST_QUEUE;
 
+    // ICMP请求转发队列
+    public static LinkedBlockingQueue<List<? extends Packet>> IP_MAC_LAN_REQUEST_ICMP;
+
+    // ICGP请求转发队列
+    public static LinkedBlockingQueue<List<? extends Packet>> IP_MAC_LAN_REQUEST_ICGP;
+
+    // UDP请求转发队列
+    public static LinkedBlockingQueue<List<? extends Packet>> IP_MAC_LAN_REQUEST_UDP;
+
+    // TCP请求转发队列
+    public static LinkedBlockingQueue<List<? extends Packet>> IP_MAC_LAN_REQUEST_TCP;
 
     // 保存局网内所有能连通的机器
     public static ConcurrentHashMap<String, IpMacPair> IP_MAC_LAN_CONNECTIVITY_CACHE;

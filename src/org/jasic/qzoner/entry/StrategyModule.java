@@ -6,8 +6,8 @@ import org.jasic.qzoner.common.GlobalCaches;
 import org.jasic.qzoner.common.GlobalConstans;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.ArpStrategy;
+import org.jasic.qzoner.core.PacketClient;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.core.handler.SendClient;
 import org.jasic.qzoner.util.NetWorkUtil;
 import org.jasic.utils.TimeUtil;
 import org.slf4j.Logger;
@@ -21,12 +21,12 @@ import static org.jasic.utils.StringUtils.fieldval2Map;
  * User: Jasic
  * Date: 13-9-18
  */
-@Module(name = GlobalConstans.MODULE_NAME_ARR_STRATEGY, priority = GlobalConstans.MODULE_PRIORITY_ARP_STRATEGY, status = GlobalConstans.MODULE_STATUS_ARP_STRATEGY)
-public class ArpStrategyModule extends AModuleable implements IService {
+@Module(name = GlobalConstans.MODULE_NAME_PACKET_STRATEGY, priority = GlobalConstans.MODULE_PRIORITY_PACKET_STRATEGY, status = GlobalConstans.MODULE_STATUS_PACKET_STRATEGY)
+public class StrategyModule extends AModuleable implements IService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ArpStrategyModule.class);
+    private static final Logger logger = LoggerFactory.getLogger(StrategyModule.class);
     private static String logHeader = "[ArpModule]";
-    private SendClient arpClient;
+    private PacketClient arpClient;
 
     private ArpStrategy arpStrategy;
 
@@ -34,7 +34,7 @@ public class ArpStrategyModule extends AModuleable implements IService {
     IpMacPair localPair = new IpMacPair();
 
 
-    public ArpStrategyModule() {
+    public StrategyModule() {
         super();
         this.init();
     }
@@ -68,7 +68,7 @@ public class ArpStrategyModule extends AModuleable implements IService {
 
         logger.info(logHeader + ":本地网卡[" + fieldval2Map(localPair) + "]，初始化成功");
 
-        this.arpClient = new SendClient(localPair, GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE);
+        this.arpClient = new PacketClient(localPair, GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE);
         this.arpStrategy = new ArpStrategy(localPair);
 
         this.arpStrategy.start();
