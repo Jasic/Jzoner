@@ -4,11 +4,13 @@ import jpcap.NetworkInterface;
 import org.jasic.qzoner.core.entity.IpMacPair;
 import org.jasic.qzoner.core.handler.HandlerDispatcher;
 import org.jasic.qzoner.util.NetWorkUtil;
+import org.jasic.utils.StringUtils;
+import org.jasic.utils.TimeUtil;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 /**
  * User: Jasic
  * Date: 13-9-11
@@ -32,6 +34,8 @@ public class PacketCaptor {
 
     private boolean blockMode;// processPacket()
 
+    private long openDeviceTimeOut;//打开网卡超时
+
     static {
         mac_captor = new ConcurrentHashMap<String, PacketCaptor>();
     }
@@ -43,6 +47,7 @@ public class PacketCaptor {
 
     /**
      * 根据地址对获取包捕获者
+     *
      * @param ipMacPair
      * @return
      */
@@ -58,22 +63,37 @@ public class PacketCaptor {
     private void init() {
         this.snaplen = 1024;
         this.timeout = 1000;
-        this.nif = NetWorkUtil.getIfByMac(this.ipMacPair.getMac());
+        this.openDeviceTimeOut = 20;//打开网卡超时
 
     }
 
-    public void startCaptor() {
+    private boolean initIf() {
+        this.nif = NetWorkUtil.getIfByMac(this.ipMacPair.getMac());
+        return this.nif != null;
+    }
+
+    public void startCaptor() throws TimeoutException {
 
         if (this.filter == null) {
             this.filter = "";
         }
         try {
+            long t1 = System.currentTimeMillis();
+            long t2 = System.currentTimeMillis();
+
+            while (!initIf() && (t2 - t1 < this.openDeviceTimeOut)) {
+                t2 = System.currentTimeMillis();
+                logger.info("网卡[" + this.ipMacPair + "]未初始化成功，继续尝试");
+                TimeUtil.sleep(1);
+            }
+                logger.info("网卡[" + this.ipMacPair + "]初始化成功!");
+
             this.jpcapCaptor = JpcapCaptor.openDevice(nif, this.snaplen, true, timeout);
             this.jpcapCaptor.setFilter(this.filter, true);
             this.jpcapCaptor.setPacketReadTimeout(this.timeout);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            e.printStackTrace();
+            throw new TimeoutException("打开指定网卡[" + StringUtils.entityToString(this.ipMacPair) + "]超时");
         }
 
         this.jpcapCaptor.loopPacket(-1, new HandlerDispatcher());

@@ -4,6 +4,7 @@ import jpcap.packet.DatalinkPacket;
 import jpcap.packet.EthernetPacket;
 import jpcap.packet.Packet;
 import org.jasic.qzoner.common.GlobalCaches;
+import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
 import org.jasic.utils.ByteUtil;
 import org.jasic.utils.SystemUtil;
@@ -24,6 +25,8 @@ public class ArpHandler extends AHandler {
     private final static String logHeader = "[arp响应]";
     private ExecutorService es;
 
+    private IpMacPair localIpMac;
+
     public ArpHandler() {
         this.es = Executors.newFixedThreadPool(10);
     }
@@ -43,7 +46,7 @@ public class ArpHandler extends AHandler {
 
         @Override
         public void run() {
-
+            localIpMac = Globalvariables.LOCAL_IP_MAC_PAIR;
             switch (arpPacket.operation) {
                 //arp请求，直接丢包
                 case 0x01: {
@@ -62,6 +65,11 @@ public class ArpHandler extends AHandler {
                     byte[] src_mac_byte = ethPacket.src_mac;
                     byte[] src_ip_byte = arpPacket.sender_protoaddr;
                     if (src_mac_byte == null) break;
+
+                    // 捕获的为本机发出的arp不处理
+                    if (localIpMac != null && SystemUtil.macByteToStr(src_mac_byte).equals(localIpMac.getMac())) {
+                        break;
+                    }
 
                     String src_mac = macByteToStr(src_mac_byte);
                     String src_ip = SystemUtil.ipByteArrToStr(src_ip_byte);

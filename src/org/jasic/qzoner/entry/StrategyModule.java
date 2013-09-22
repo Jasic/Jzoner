@@ -8,7 +8,6 @@ import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.ArpStrategy;
 import org.jasic.qzoner.core.PacketClient;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.util.NetWorkUtil;
 import org.jasic.utils.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,8 @@ public class StrategyModule extends AModuleable implements IService {
     private ArpStrategy arpStrategy;
 
     private ExecutorService es;
-    IpMacPair localPair = new IpMacPair();
+    private IpMacPair localPair;
+    private IpMacPair gateWay;
 
 
     public StrategyModule() {
@@ -48,28 +48,27 @@ public class StrategyModule extends AModuleable implements IService {
      * 初始化本地网卡信息
      */
     private void initLocalPair() {
-        String mac = Globalvariables.MAC_LOCAL_ETH_0;
-        localPair.setMac(mac);
-        localPair.setIp(NetWorkUtil.getIpByMac(mac));
-        localPair.setSubNet(NetWorkUtil.getSubNetByMac(mac));
+        this.localPair = Globalvariables.LOCAL_IP_MAC_PAIR; // 通过系统初始化模块进行获取值。
+        this.gateWay = Globalvariables.GATE_WAY_IP_MAC_PAIR;
     }
 
 
     @Override
     public void service() {
         while (true) {
-            if (localPair.getIp() != null && localPair.getSubNet() != null) {
+            if (localPair != null && localPair.getIp() != null && localPair.getSubNet() != null) {
                 break;
             }
-            logger.info(logHeader + ":本地网卡[" + localPair.getMac() + "]，信息读取失败，继续尝试");
+            logger.info(logHeader + ":网卡[" + (localPair == null ? "未知mac地址" : localPair.getMac()) + "]，信息读取失败，继续尝试");
             this.initLocalPair();
             TimeUtil.sleep(1);
         }
 
-        logger.info(logHeader + ":本地网卡[" + fieldval2Map(localPair) + "]，初始化成功");
 
-        this.arpClient = new PacketClient(localPair, GlobalCaches.IP_MAC_LAN_ARP_REQUEST_QUEUE);
-        this.arpStrategy = new ArpStrategy(localPair);
+        logger.info(logHeader + ":网卡[" + fieldval2Map(localPair) + "]，初始化成功");
+
+        this.arpClient = new PacketClient(localPair, GlobalCaches.IP_MAC_LAN_PACKET_TO_BE_SEND_QUEUE);
+        this.arpStrategy = new ArpStrategy(localPair, gateWay);
 
         this.arpStrategy.start();
         this.arpClient.start();

@@ -4,9 +4,9 @@ import jpcap.NetworkInterface;
 import jpcap.packet.*;
 import org.jasic.qzoner.core.entity.IpMacPair;
 import org.jasic.qzoner.util.NetWorkUtil;
+import org.jasic.utils.TimeUtil;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +24,8 @@ public class PacketSender {
     private JpcapSender jpcapSender;
 
     private IpMacPair ip_mac;
+    private NetworkInterface nif;
+    private long openDeviceTimeOut;
 
     static {
         mac_senders = new ConcurrentHashMap<String, PacketSender>();
@@ -34,6 +36,7 @@ public class PacketSender {
      */
     private PacketSender(IpMacPair ip_mac) {
         this.ip_mac = ip_mac;
+        this.openDeviceTimeOut = 10;
         this.init();
     }
 
@@ -53,13 +56,28 @@ public class PacketSender {
     }
 
     private void init() {
-        NetworkInterface nif = NetWorkUtil.getIfByMac(this.ip_mac.getMac());
         try {
+
+            long t1 = System.currentTimeMillis();
+            long t2 = System.currentTimeMillis();
+
+            while (!initIf() && (t2 - t1 < this.openDeviceTimeOut)) {
+                t2 = System.currentTimeMillis();
+                logger.info("网卡[" + this.ip_mac + "]未初始化成功，继续尝试");
+                TimeUtil.sleep(1);
+            }
+            logger.info("网卡[" + this.ip_mac + "]初始化成功!");
+
             this.jpcapSender = JpcapSender.openDevice(nif);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Can't init the interface [" + this.ip_mac + "], please check it~");
-            e.printStackTrace();
+            System.exit(-1);
         }
+    }
+
+    private boolean initIf() {
+        this.nif = NetWorkUtil.getIfByMac(this.ip_mac.getMac());
+        return this.nif != null;
     }
 
     /**

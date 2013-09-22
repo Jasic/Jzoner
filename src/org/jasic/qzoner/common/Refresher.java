@@ -16,6 +16,7 @@ public class Refresher extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(Refresher.class);
     private static final String logHeader = "[剧新]";
     private int interval;
+    private boolean isInit;
 
     public Refresher() {
         this.interval = Globalvariables.SYSTEM_REFRESH_INTERVAL;
@@ -27,7 +28,6 @@ public class Refresher extends Thread {
 
     public void run() {
         while (!isInterrupted()) {
-
             String mac = Globalvariables.MAC_LOCAL_ETH_0;
             IpMacPair localIpMac = new IpMacPair();
             localIpMac.setIp(NetWorkUtil.getIpByMac(mac));
@@ -40,7 +40,6 @@ public class Refresher extends Thread {
                 String gateWayIp = SystemUtil.getGateWayIp(localIpMac.getIp());
                 String gateWaySubNet = localIpMac.getSubNet();
                 if (gateWayIp != null) {
-
                     String gateWayMac = SystemUtil.getLanMacByIp(gateWayIp);
                     gateWay.setIp(gateWayIp);
                     gateWay.setSubNet(gateWaySubNet);
@@ -48,11 +47,17 @@ public class Refresher extends Thread {
 
                     if (!StringUtils.hasEmpty(gateWayIp, gateWaySubNet, gateWayMac)) {
                         logger.info(logHeader + "[网关ip对]" + entityToString(gateWay));
+                        Globalvariables.LOCAL_IP_MAC_PAIR = localIpMac;
                         Globalvariables.GATE_WAY_IP_MAC_PAIR = gateWay;
+                        isInit = true;
                     }
                 }
             }
-            TimeUtil.sleep(this.interval);
+            if (!isInit) {
+                TimeUtil.sleep(this.interval);
+            } else {
+                TimeUtil.sleep(this.interval * 10);
+            }
         }
     }
 }

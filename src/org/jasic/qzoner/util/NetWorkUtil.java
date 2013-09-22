@@ -78,9 +78,10 @@ public class NetWorkUtil {
         }
         NetworkInterface eth = null;
         NetworkInterface[] ethList = JpcapCaptor.getDeviceList();
+        if (ethList == null || ethList.length == 0) return null;
 
         for (jpcap.NetworkInterface iF : ethList) {
-            if (iF.mac_address == null) continue;
+            if (null == iF || iF.mac_address == null) continue;
             String actul_mac = ByteUtil.toHexString(iF.mac_address).replace(" ", "-");
             if (mac.equals(actul_mac)) {
                 eth = iF;

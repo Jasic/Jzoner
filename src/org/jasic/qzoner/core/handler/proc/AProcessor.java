@@ -1,5 +1,9 @@
 package org.jasic.qzoner.core.handler.proc;
-import jpcap.packet.Packet;
+import jpcap.packet.EthernetPacket;
+import jpcap.packet.IPPacket;
+import org.jasic.qzoner.common.Globalvariables;
+import org.jasic.qzoner.core.entity.IpMacPair;
+import org.jasic.utils.SystemUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,7 +12,13 @@ import java.util.concurrent.Executors;
  * User: Jasic
  * Date: 13-9-18
  */
-public abstract class AProcessor<P extends Packet> {
+public abstract class AProcessor<P extends IPPacket> {
+
+    // 本地ip_mac对
+    protected IpMacPair localIpMacPair;
+
+    //网关ip_mac对
+    protected IpMacPair gateWayIpMacPair;
 
     private ExecutorService es;
 
@@ -23,6 +33,9 @@ public abstract class AProcessor<P extends Packet> {
     }
 
     private void init() {
+        this.localIpMacPair = Globalvariables.LOCAL_IP_MAC_PAIR;
+        this.gateWayIpMacPair = Globalvariables.GATE_WAY_IP_MAC_PAIR;
+
         if (this.es == null) {
             this.es = Executors.newCachedThreadPool();
         }
@@ -33,6 +46,24 @@ public abstract class AProcessor<P extends Packet> {
                 new Runnable() {
                     @Override
                     public void run() {
+                        // 由本机发出的不处理
+                        if (packet.src_ip.getHostAddress().equals(localIpMacPair.getIp())) {
+                            return;
+                        }
+
+                        //发往本机ip的包，即不是需要捕获的包，所以不处理
+                        if (packet.dst_ip.getHostAddress().equals(localIpMacPair.getIp())) {
+                            return;
+                        }
+
+                        EthernetPacket ethernetPacket = (EthernetPacket) packet.datalink;
+                        String src_mac = SystemUtil.macByteToStr(ethernetPacket.src_mac);
+
+                        //本机发出的的包不处理
+                        if (src_mac.equals(localIpMacPair.getMac())) {
+                            return;
+                        }
+
                         doProcess(packet);
                     }
                 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 /**
  * User: Jasic
  * Date: 13-9-18
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 public class PacketClient extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(PacketClient.class);
+    private static final String logHeader = "[发送平台]";
 
     private PacketSender sender;
     private ExecutorService es;
@@ -46,7 +48,13 @@ public class PacketClient extends Thread {
         new Thread() {
             @Override
             public void run() {
-                captor.startCaptor();
+                try {
+                    captor.startCaptor();
+                } catch (TimeoutException e) {
+                    logger.info(logHeader + e.getMessage());
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
             }
         }.start();
 

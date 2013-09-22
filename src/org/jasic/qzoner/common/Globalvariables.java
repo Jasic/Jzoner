@@ -6,8 +6,8 @@ import org.jasic.qzoner.core.entity.IpMacPair;
  */
 public class Globalvariables {
 
-    // 系统变量刷新时间间隔
-    public static int SYSTEM_REFRESH_INTERVAL = 60;
+    // 系统变量刷新时间间隔单位秒
+    public static int SYSTEM_REFRESH_INTERVAL = 1;
 
     // 本机所使用网卡的物理地址
     public static String MAC_LOCAL_ETH_0 = "78-45-C4-05-80-1D";

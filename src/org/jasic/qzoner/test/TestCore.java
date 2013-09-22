@@ -10,6 +10,7 @@ import org.jasic.utils.TimeUtil;
 
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.jasic.utils.StringUtils.fieldval2Map;
 /**
@@ -33,7 +34,11 @@ public class TestCore {
             @Override
             public void run() {
                 PacketCaptor captor = PacketCaptor.newPacketCaptor(new IpMacPair("", Globalvariables.MAC_LOCAL_ETH_0));
-                captor.startCaptor();
+                try {
+                    captor.startCaptor();
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
             }
         }.start();
         sendNormalBrocasArp();
