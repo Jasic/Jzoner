@@ -12,6 +12,13 @@ public class IpMacPair {
     public IpMacPair(String ip, String mac) {
         this.ip = ip;
         this.mac = mac;
+        this.subNet = "255.255.255.0";
+    }
+
+    public IpMacPair(String ip, String mac, String subNet) {
+        this.ip = ip;
+        this.mac = mac;
+        this.subNet = subNet;
     }
 
     private String ip;

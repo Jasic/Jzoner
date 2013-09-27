@@ -48,7 +48,7 @@ public class ArpHandler extends AHandler {
         public void run() {
             localIpMac = Globalvariables.LOCAL_IP_MAC_PAIR;
             switch (arpPacket.operation) {
-                //arp请求，直接丢包
+                //arp请求，如果是广播请求网关，则即刻响应
                 case 0x01: {
                     arpPacket = null;
                     break;
@@ -79,7 +79,7 @@ public class ArpHandler extends AHandler {
                     GlobalCaches.IP_MAC_LAN_CONNECTIVITY_CACHE.put(src_ip, pair);
 
                     String rel = mapToString(fieldval2Map(pair));
-                    logger.info(logHeader + rel);
+//                    logger.info(logHeader + rel);
                     break;
                 }
                 default: {

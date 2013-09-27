@@ -19,7 +19,6 @@ public class NetWorkUtil {
         System.out.println(iF);
         System.out.println(getIpByMac("78-45-C4-05-80-1D"));
         System.out.println(getSubNetByMac("78-45-C4-05-80-1D"));
-
     }
 
     /**
@@ -34,8 +33,7 @@ public class NetWorkUtil {
             for (NetworkInterfaceAddress address : iF.addresses) {
                 if (address.subnet == null) continue;
                 String ip = StringUtils.deleteWhitespace(address.subnet.getHostAddress());
-                if (StringUtils.isMatch("^[1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}$",
-                        ip)) {
+                if (StringUtils.isMatch("^[1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}[.][1-2]?[0-9]{1,2}$", ip)) {
                     return ip;
                 }
             }
@@ -90,5 +88,4 @@ public class NetWorkUtil {
         }
         return eth;
     }
-
 }

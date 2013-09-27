@@ -26,7 +26,6 @@ public class Globalvariables {
     public static IpMacPair GATE_WAY_IP_MAC_PAIR;
 
 
-
     // arp策略发送时间间隔
     public static long ARP_STRATEGY_INTERVAL = 10000;
 

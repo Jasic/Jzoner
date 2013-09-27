@@ -71,7 +71,7 @@ public class PacketClient extends Thread {
                     public void run() {
                         for (Packet o : list) {
                             if (o instanceof Packet) {
-                                sender.send(o);
+                                sender.send(o, false);
                             }
                         }
                     }

@@ -86,7 +86,7 @@ public class PacketCaptor {
                 logger.info("网卡[" + this.ipMacPair + "]未初始化成功，继续尝试");
                 TimeUtil.sleep(1);
             }
-                logger.info("网卡[" + this.ipMacPair + "]初始化成功!");
+            logger.info("网卡[" + this.ipMacPair + "]初始化成功!");
 
             this.jpcapCaptor = JpcapCaptor.openDevice(nif, this.snaplen, true, timeout);
             this.jpcapCaptor.setFilter(this.filter, true);

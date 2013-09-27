@@ -86,21 +86,18 @@ public class PacketSender {
      * @param packet
      */
     public void send(Packet packet) {
-        packet = autoWrapDataLink(packet, null);
-        this.jpcapSender.sendPacket(packet);
+        send(packet, true);
     }
 
-    private void send(Packet packet, byte[] dst_addr) {
-        packet = autoWrapDataLink(packet, dst_addr);
-        this.jpcapSender.sendPacket(packet);
+    public void send(Packet packet, boolean autoWrapDataLink) {
+        send(packet, null, autoWrapDataLink);
     }
 
-    /**
-     * @param packet   数据包
-     * @param dst_addr 目的地址mac
-     */
-    public void send(Packet packet, String dst_addr) {
-        send(packet, macStrToByte(dst_addr));
+    private void send(Packet packet, byte[] dst_addr, boolean autoWrapDataLink) {
+        if (autoWrapDataLink) {
+            packet = autoWrapDataLink(packet, dst_addr);
+        }
+        this.jpcapSender.sendPacket(packet);
     }
 
     /**
