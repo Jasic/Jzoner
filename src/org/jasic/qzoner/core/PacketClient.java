@@ -1,6 +1,8 @@
 package org.jasic.qzoner.core;
 import jpcap.packet.Packet;
+import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.core.entity.IpMacPair;
+import org.jasic.qzoner.core.handler.PacketCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 public class PacketClient extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(PacketClient.class);
-    private static final String logHeader = "[发送平台]";
+    private static final String logHeader = "数据平台";
 
     private PacketSender sender;
     private ExecutorService es;
@@ -25,7 +27,7 @@ public class PacketClient extends Thread {
     private PacketCaptor captor;
 
     public PacketClient(IpMacPair ipMacPair, BlockingQueue<List<? extends Packet>> queue) {
-        this(ipMacPair, queue, Executors.newCachedThreadPool());
+        this(ipMacPair, queue, Executors.newFixedThreadPool(1, new DefualtThreadFactory("数据包发送")));
     }
 
     public PacketClient(IpMacPair ipMacPair, BlockingQueue<List<? extends Packet>> queue, ExecutorService es) {
@@ -37,6 +39,7 @@ public class PacketClient extends Thread {
         this.captor = captor;
         this.queue = queue;
         this.es = es;
+        super.setName(logHeader);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class PacketClient extends Thread {
         /**
          * 开启捕获线程
          */
-        new Thread() {
+        new Thread(logHeader) {
             @Override
             public void run() {
                 try {

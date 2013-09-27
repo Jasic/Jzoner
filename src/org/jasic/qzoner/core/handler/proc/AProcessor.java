@@ -1,6 +1,7 @@
 package org.jasic.qzoner.core.handler.proc;
 import jpcap.packet.EthernetPacket;
 import jpcap.packet.IPPacket;
+import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
 import org.jasic.utils.SystemUtil;
@@ -37,7 +38,7 @@ public abstract class AProcessor<P extends IPPacket> {
         this.gateWayIpMacPair = Globalvariables.GATE_WAY_IP_MAC_PAIR;
 
         if (this.es == null) {
-            this.es = Executors.newCachedThreadPool();
+            this.es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("IP包处理池"));
         }
     }
 

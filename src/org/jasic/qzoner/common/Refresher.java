@@ -14,16 +14,21 @@ import static org.jasic.utils.StringUtils.entityToString;
  */
 public class Refresher extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(Refresher.class);
-    private static final String logHeader = "[剧新]";
+    private static final String logHeader = "系统刷新";
     private int interval;
     private boolean isInit;
 
     public Refresher() {
-        this.interval = Globalvariables.SYSTEM_REFRESH_INTERVAL;
+        this(Globalvariables.SYSTEM_REFRESH_INTERVAL);
     }
 
     public Refresher(int interval) {
         this.interval = interval;
+        this.init();
+    }
+
+    private void init() {
+        super.setName(logHeader);
     }
 
     public void run() {

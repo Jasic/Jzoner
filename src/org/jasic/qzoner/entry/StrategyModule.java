@@ -12,9 +12,6 @@ import org.jasic.utils.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static org.jasic.utils.StringUtils.fieldval2Map;
 /**
  * User: Jasic
@@ -24,12 +21,11 @@ import static org.jasic.utils.StringUtils.fieldval2Map;
 public class StrategyModule extends AModuleable implements IService {
 
     private static final Logger logger = LoggerFactory.getLogger(StrategyModule.class);
-    private static String logHeader = "[ArpModule]";
+    private static String logHeader = "[StrategyModule]";
     private PacketClient arpClient;
 
     private ArpStrategy arpStrategy;
 
-    private ExecutorService es;
     private IpMacPair localPair;
     private IpMacPair gateWay;
 
@@ -40,7 +36,6 @@ public class StrategyModule extends AModuleable implements IService {
     }
 
     private void init() {
-        this.es = Executors.newCachedThreadPool();
         this.initLocalPair();
     }
 

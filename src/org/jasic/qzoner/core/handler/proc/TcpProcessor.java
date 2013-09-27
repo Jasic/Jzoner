@@ -1,5 +1,6 @@
 package org.jasic.qzoner.core.handler.proc;
 import jpcap.packet.TCPPacket;
+import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.core.entity.http.Header;
 import org.jasic.qzoner.core.entity.http.HeaderRowPair;
 import org.jasic.qzoner.util.ParserUtil;
@@ -14,17 +15,23 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 /**
  * User: Jasic
  * Date: 13-9-18
  */
 public class TcpProcessor extends AProcessor<TCPPacket> {
     private final static Logger logger = LoggerFactory.getLogger(TcpProcessor.class);
-    private final static String logHeader = "[TCP处理]";
+    private final static String logHeader = "TCP处理";
     private Map<String, String> map = new HashMap<String, String>(16);
     private File file = new File("F:/qzone.txt");
     private FileWriter fw;
     private FileReader fr;
+
+
+    public TcpProcessor() {
+        super(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("TCP包处理池")));
+    }
 
     {
         try {

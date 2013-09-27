@@ -32,6 +32,7 @@ public class ArpStrategy extends Thread {
         this.localIpMacPair = ipMacPair;
         this.gateWay = gateWay;
         this.interval = Globalvariables.ARP_STRATEGY_INTERVAL;
+        super.setName(logHeader);
     }
 
     @Override
@@ -68,10 +69,11 @@ public class ArpStrategy extends Thread {
                     queue.put(fqs);
                     logger.info(logHeader + "[随机伪造网关请求或响应]" + fqs.toString());
                 }
-                TimeUtil.sleep(this.interval);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info(logHeader + e.getMessage());
+            } finally {
+                TimeUtil.sleep(this.interval);
             }
         }
     }

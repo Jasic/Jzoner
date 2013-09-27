@@ -1,8 +1,7 @@
-package org.jasic.qzoner.core;
+package org.jasic.qzoner.core.handler;
 import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.core.handler.HandlerDispatcher;
 import org.jasic.qzoner.util.NetWorkUtil;
 import org.jasic.utils.StringUtils;
 import org.jasic.utils.TimeUtil;
