@@ -23,11 +23,15 @@ import java.util.concurrent.Executors;
 public class TcpProcessor extends AProcessor<TCPPacket> {
     private final static Logger logger = LoggerFactory.getLogger(TcpProcessor.class);
     private final static String logHeader = "TCP处理";
+
+
     private Map<String, String> map = new HashMap<String, String>(16);
+
+
+
     private File file = new File("F:/qzone.txt");
     private FileWriter fw;
     private FileReader fr;
-
 
     public TcpProcessor() {
         super(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("TCP包处理池")));

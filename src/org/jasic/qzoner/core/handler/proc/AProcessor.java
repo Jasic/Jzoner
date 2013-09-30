@@ -4,6 +4,8 @@ import jpcap.packet.IPPacket;
 import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
+import org.jasic.qzoner.core.handler.Filter.DefaultFilterParallel;
+import org.jasic.qzoner.core.handler.Filter.FilterParallel;
 import org.jasic.utils.SystemUtil;
 
 import java.util.concurrent.ExecutorService;
@@ -21,6 +23,9 @@ public abstract class AProcessor<P extends IPPacket> {
     //网关ip_mac对
     protected IpMacPair gateWayIpMacPair;
 
+    // 并行过滤
+    private FilterParallel filterParallel;
+
     private ExecutorService es;
 
     public AProcessor() {
@@ -36,6 +41,7 @@ public abstract class AProcessor<P extends IPPacket> {
     private void init() {
         this.localIpMacPair = Globalvariables.LOCAL_IP_MAC_PAIR;
         this.gateWayIpMacPair = Globalvariables.GATE_WAY_IP_MAC_PAIR;
+        this.filterParallel = new DefaultFilterParallel();
 
         if (this.es == null) {
             this.es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("IP包处理池"));

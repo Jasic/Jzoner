@@ -1,11 +1,13 @@
 package org.jasic.qzoner.core.entity.http;
+import org.jasic.qzoner.core.entity.IData;
+
 import java.util.ArrayList;
 import java.util.List;
 /**
  * User: Jasic
  * Date: 13-9-24
  */
-public class Header {
+public class Header implements IData{
 
     private String type; //请求类型 如get post
 

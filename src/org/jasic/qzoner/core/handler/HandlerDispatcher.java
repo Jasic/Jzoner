@@ -34,7 +34,7 @@ public class HandlerDispatcher implements PacketReceiver {
     private void init() {
         this.arpHandler = new ArpHandler();
         this.ipHandler = new IpHandler();
-        this.es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("[Link包处理池]"));
+        this.es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("Link包处理池"));
 
     }
 

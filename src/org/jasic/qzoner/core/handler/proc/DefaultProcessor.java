@@ -2,6 +2,7 @@ package org.jasic.qzoner.core.handler.proc;
 import jpcap.packet.EthernetPacket;
 import jpcap.packet.IPPacket;
 import jpcap.packet.Packet;
+import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.GlobalCaches;
 import org.jasic.utils.SystemUtil;
 import org.slf4j.Logger;
@@ -18,28 +19,29 @@ import java.util.concurrent.Executors;
  */
 public class DefaultProcessor extends AProcessor<IPPacket> {
     private final static Logger loger = LoggerFactory.getLogger(DefaultProcessor.class);
-    private final static String logHeader = "[转发包]";
-
+    private final static String logHeader = "转发包";
 
     private List<Packet> list;
 
     private Timer timer;
 
+    /**
+     *
+     */
     public DefaultProcessor() {
-        super(Executors.newFixedThreadPool(1));
+        super(Executors.newFixedThreadPool(1, new DefualtThreadFactory(logHeader)));
         list = new ArrayList<Packet>();
 
         this.init();
     }
 
     private void init() {
-        timer = new Timer("[默认包转发]", true);
-        timer.schedule(new RedirectStrategy(), 0, 10);
+        timer = new Timer(logHeader, true);
+        timer.schedule(new RedirectStrategy(), 0, 1);
     }
 
     @Override
     protected void doProcess(IPPacket packet) {
-
 
         EthernetPacket ethPacket = (EthernetPacket) packet.datalink;
         String old_mac = SystemUtil.macByteToStr(ethPacket.dst_mac);

@@ -19,13 +19,13 @@ public class IpHandler extends AHandler<IPPacket> {
 
     @Override
     public void handle(IPPacket packet) {
-
-
         if (packet instanceof TCPPacket) {
             tcpProc.process((TCPPacket) packet);
         }
-        this.defaultProc.process((IPPacket) packet);
     }
 
-
+    @Override
+    public void after(IPPacket packet) {
+        this.defaultProc.process(packet);
+    }
 }

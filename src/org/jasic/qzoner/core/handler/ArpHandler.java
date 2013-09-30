@@ -3,6 +3,7 @@ import jpcap.packet.ARPPacket;
 import jpcap.packet.DatalinkPacket;
 import jpcap.packet.EthernetPacket;
 import jpcap.packet.Packet;
+import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.GlobalCaches;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
@@ -28,7 +29,7 @@ public class ArpHandler extends AHandler {
     private IpMacPair localIpMac;
 
     public ArpHandler() {
-        this.es = Executors.newFixedThreadPool(10);
+        this.es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new DefualtThreadFactory("ARP包处理池"));
     }
 
     @Override
