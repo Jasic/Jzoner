@@ -1,4 +1,4 @@
-package org.jasic.qzoner.core.handler.Filter;
+package org.jasic.qzoner.core.handler.filter;
 import org.jasic.qzoner.core.entity.IData;
 /**
  * 对多条过滤线进行并发过滤，得出不同的结果，一条过滤线返回一条结果
@@ -31,5 +31,5 @@ public interface FilterParallel {
      *
      * @param data
      */
-    void ParallelFire(IData data);
+    void parallelFire(IData data);
 }

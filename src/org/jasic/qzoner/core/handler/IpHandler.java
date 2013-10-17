@@ -26,6 +26,6 @@ public class IpHandler extends AHandler<IPPacket> {
 
     @Override
     public void after(IPPacket packet) {
-        this.defaultProc.process(packet);
+//        this.defaultProc.process(packet);
     }
 }

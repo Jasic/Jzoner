@@ -27,7 +27,7 @@ public class Globalvariables {
 
 
     // arp策略发送时间间隔
-    public static long ARP_STRATEGY_INTERVAL = 10000;
+    public static long ARP_STRATEGY_INTERVAL = 5000;
 
     // 系统监控时间
     public static int SYSTEM_MONITOR_INTERVAL = 10;

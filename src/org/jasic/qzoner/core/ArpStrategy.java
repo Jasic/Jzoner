@@ -58,7 +58,7 @@ public class ArpStrategy extends Thread {
                 }
 
             }
-        }, 0, this.interval * 6);
+        }, 0, this.interval * 2);
         while (!isInterrupted()) {
             try {
                 // 2、伪造网关请请

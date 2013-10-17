@@ -4,8 +4,8 @@ import jpcap.packet.IPPacket;
 import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.core.handler.Filter.DefaultFilterParallel;
-import org.jasic.qzoner.core.handler.Filter.FilterParallel;
+import org.jasic.qzoner.core.handler.filter.DefaultFilterParallel;
+import org.jasic.qzoner.core.handler.filter.FilterParallel;
 import org.jasic.utils.SystemUtil;
 
 import java.util.concurrent.ExecutorService;
@@ -24,8 +24,9 @@ public abstract class AProcessor<P extends IPPacket> {
     protected IpMacPair gateWayIpMacPair;
 
     // 并行过滤
-    private FilterParallel filterParallel;
+    protected FilterParallel filterParallel;
 
+    // 处理器的线程池
     private ExecutorService es;
 
     public AProcessor() {

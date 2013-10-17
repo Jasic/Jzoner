@@ -1,4 +1,4 @@
-package org.jasic.qzoner.core.handler.Filter;
+package org.jasic.qzoner.core.handler.filter;
 import org.jasic.qzoner.core.entity.IData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,6 @@ public class DefaultFilterLine implements FilterLine {
     private String name;
 
     /**
-     *
-     */
-    private final IData data;
-
-    /**
      * The chain head
      */
     private final EntryImpl head;
@@ -36,15 +31,8 @@ public class DefaultFilterLine implements FilterLine {
      * Create a new default chain, associated with a session. It will only contain a
      * HeadFilter and a TailFilter.
      *
-     * @param data The session associated with the created filter chain
      */
-    public DefaultFilterLine(IData data) {
-        if (data == null) {
-            throw new IllegalArgumentException("data");
-        }
-
-        this.data = data;
-
+    public DefaultFilterLine() {
         head = new EntryImpl(null, null, "head", new Filter() {
             @Override
             public String getName() {
@@ -75,8 +63,11 @@ public class DefaultFilterLine implements FilterLine {
         fire0(this.head, data);
     }
 
-    private void fire0(Entry entry, IData data) {
-        entry.getFilter().filter(data);
+    private void fire0(EntryImpl entry, IData data) {
+
+        do {
+            entry.getFilter().filter(data);
+        } while ((entry = entry.nextEntry) != null);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class SystemInitModule extends AModuleable implements IService {
         SystemMonitor monitor;
 
         fresher = new Refresher();
-        monitor = new SystemMonitor(Globalvariables.SYSTEM_MONITOR_INTERVAL, true);
+        monitor = new SystemMonitor(Globalvariables.SYSTEM_MONITOR_INTERVAL, false);
 
         fresher.start();
         monitor.start();

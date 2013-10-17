@@ -1,4 +1,4 @@
-package org.jasic.qzoner.core.handler.Filter;
+package org.jasic.qzoner.core.handler.filter;
 import org.jasic.qzoner.core.entity.IData;
 
 import java.util.Map;
@@ -26,7 +26,6 @@ public class DefaultFilterParallel implements FilterParallel {
 
     public DefaultFilterParallel() {
         this("DefaultFilterParallel");
-
     }
 
     public DefaultFilterParallel(String name) {
@@ -51,7 +50,7 @@ public class DefaultFilterParallel implements FilterParallel {
     }
 
     @Override
-    public synchronized void ParallelFire(IData data) {
+    public synchronized void parallelFire(IData data) {
         if (es == null) {
             es = Executors.newFixedThreadPool(map.size());
         }

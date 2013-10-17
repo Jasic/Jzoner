@@ -1,4 +1,4 @@
-package org.jasic.qzoner.core.handler.Filter;
+package org.jasic.qzoner.core.handler.filter;
 import org.jasic.qzoner.core.entity.IData;
 /**
  * User: Jasic
