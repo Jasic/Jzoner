@@ -7,7 +7,6 @@ import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.common.GlobalCaches;
 import org.jasic.qzoner.common.Globalvariables;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.utils.ByteUtil;
 import org.jasic.utils.SystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,8 @@ import static org.jasic.utils.StringUtils.mapToString;
 /**
  * User: Jasic
  * Date: 13-9-11
+ *
+ * ARP数据包处理者
  */
 public class ArpHandler extends AHandler {
     private final static Logger logger = LoggerFactory.getLogger(AHandler.class);
@@ -72,7 +73,7 @@ public class ArpHandler extends AHandler {
                         break;
                     }
 
-                    String src_mac = macByteToStr(src_mac_byte);
+                    String src_mac = SystemUtil.macByteToStr(src_mac_byte);
                     String src_ip = SystemUtil.ipByteArrToStr(src_ip_byte);
 
                     IpMacPair pair = new IpMacPair(src_ip, src_mac);
@@ -88,19 +89,5 @@ public class ArpHandler extends AHandler {
                 }
             }
         }
-    }
-
-    public static String macByteToStr(byte[] arr) {
-        if (arr == null) {
-            return null;
-        }
-        StringBuilder mac_str = new StringBuilder();
-
-        for (int i = 0; i < arr.length; i++) {
-            mac_str.append(ByteUtil.toHexString(new byte[]{arr[i]}));
-            if (i < arr.length - 1)
-                mac_str.append("-");
-        }
-        return mac_str.toString();
     }
 }

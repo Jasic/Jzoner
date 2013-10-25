@@ -10,8 +10,8 @@ public class Globalvariables {
     public static int SYSTEM_REFRESH_INTERVAL = 1;
 
     // 本机所使用网卡的物理地址
-    public static String MAC_LOCAL_ETH_0 = "78-45-C4-05-80-1D";
-//    public static String MAC_LOCAL_ETH_0 = "0C-82-68-05-A6-C6";
+//    public static String MAC_LOCAL_ETH_0 = "78-45-C4-05-80-1D";
+    public static String MAC_LOCAL_ETH_0 = "0C-82-68-05-A6-C6";
 
     // 广播的物理地址
     public static String MAC_NETWORK_BROCAST = "FF-FF-FF-FF-FF-FF";

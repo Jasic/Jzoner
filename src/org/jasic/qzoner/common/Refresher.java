@@ -42,8 +42,8 @@ public class Refresher extends Thread {
             if (localIpMac.getIp() != null) {
                 logger.info(logHeader + "[本地ip对]" + entityToString(localIpMac));
                 IpMacPair gateWay = new IpMacPair();
-//                String gateWayIp = SystemUtil.getGateWayIp(localIpMac.getIp());
-                String gateWayIp = "172.16.27.1";
+                String gateWayIp = SystemUtil.getGateWayIp(localIpMac.getIp());
+//                String gateWayIp = "172.16.27.1";
                 String gateWaySubNet = localIpMac.getSubNet();
                 if (gateWayIp != null) {
                     String gateWayMac = SystemUtil.getLanMacByIp(gateWayIp);

@@ -2,7 +2,6 @@ package org.jasic.qzoner.core;
 import jpcap.packet.Packet;
 import org.jasic.common.DefualtThreadFactory;
 import org.jasic.qzoner.core.entity.IpMacPair;
-import org.jasic.qzoner.core.handler.PacketCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +19,26 @@ public class PacketClient extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(PacketClient.class);
     private static final String logHeader = "数据平台";
 
+    /**
+     * 数据包发送器
+     */
     private PacketSender sender;
+
+    /**
+     * 数据包捕获器
+     */
+    private PacketCaptor captor;
+
+    /**
+     * 数据包发送线程池
+     */
     private ExecutorService es;
+
+    /**
+     * IP包队列
+     */
     private BlockingQueue<List<? extends Packet>> queue;
 
-    private PacketCaptor captor;
 
     public PacketClient(IpMacPair ipMacPair, BlockingQueue<List<? extends Packet>> queue) {
         this(ipMacPair, queue, Executors.newFixedThreadPool(1, new DefualtThreadFactory("数据包发送")));

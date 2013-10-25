@@ -19,7 +19,7 @@ public class MainThread {
         }
 
         try {
-            SystemUtil.addLibraryPath("D:\\DeskTop\\Qzoner\\lib");
+            SystemUtil.addLibraryPath("E:\\work\\empolyed\\Qzoner\\lib");
         } catch (IOException e) {
             e.printStackTrace();
         }

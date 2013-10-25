@@ -16,7 +16,7 @@
 
     <appender name="debug"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\debug.log"/>
+        <param name="File" value="E:/work/logdebug.log"/>
         <param name="DatePattern" value="'.'yyyyMMdd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -31,7 +31,7 @@
 
     <appender name="info"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\info.log"/>
+        <param name="File" value="E:/work/loginfo.log"/>
         <param name="DatePattern" value="'.'yyyyMMdd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -46,7 +46,7 @@
 
     <appender name="warn"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\warn.log"/>
+        <param name="File" value="E:/work/logwarn.log"/>
         <param name="DatePattern" value="'.'yyyyMMdd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -61,7 +61,7 @@
 
     <appender name="error"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="E:\\Temp\\log\\sxt_SMSKernel\\error.log"/>
+        <param name="File" value="E:/work/logerror.log"/>
         <param name="DatePattern" value="'.'yyyyMMdd"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">

@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 /**
  * User: Jasic
  * Date: 13-9-11
+ * 数据包处理分发器
  */
 public class HandlerDispatcher implements PacketReceiver {
     private static final Logger logger = LoggerFactory.getLogger(HandlerDispatcher.class);
@@ -27,7 +28,6 @@ public class HandlerDispatcher implements PacketReceiver {
     private ObjectInputStream ois;
 
     public HandlerDispatcher() {
-
         this.init();
     }
 
@@ -64,6 +64,9 @@ public class HandlerDispatcher implements PacketReceiver {
                     @Override
                     public void run() {
                         try {
+                            /**
+                             * 将消息复制然后分发
+                             */
                             dispatch(ObjectUtils.cloneObject(packet));
                         } catch (Exception e) {
                             e.printStackTrace();

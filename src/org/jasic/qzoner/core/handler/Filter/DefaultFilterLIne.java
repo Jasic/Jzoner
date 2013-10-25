@@ -10,7 +10,7 @@ public class DefaultFilterLine implements FilterLine {
     /**
      * The logger for this class
      */
-    private final static Logger LOGGER = LoggerFactory.getLogger(DefaultFilterLine.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(org.jasic.qzoner.core.handler.filter.DefaultFilterLine.class);
 
     /**
      *
@@ -120,12 +120,12 @@ public class DefaultFilterLine implements FilterLine {
 
         @Override
         public void addBefore(String name, Filter filter) {
-            DefaultFilterLine.this.addBefore(name, filter);
+            org.jasic.qzoner.core.handler.filter.DefaultFilterLine.this.addBefore(name, filter);
         }
 
         @Override
         public void addAfter(String name, Filter filter) {
-            DefaultFilterLine.this.addAfter(name, filter);
+            org.jasic.qzoner.core.handler.filter.DefaultFilterLine.this.addAfter(name, filter);
         }
     }
 }
